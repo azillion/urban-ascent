@@ -3,6 +3,6 @@ import toolbarReducer from './toolbar'
 
 export default configureStore({
   reducer: {
-	toolbarReducer
+  toolbarReducer
   }
 })

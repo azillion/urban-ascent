@@ -1,19 +1,16 @@
 import("../pkg/index.js").catch(console.error);
 
-import { createRoot } from 'react-dom/client';
-import React from 'react';
-import { Provider } from 'react-redux'
+import initializeUI from './ui';
+import initializeWorld from './world';
 
-import store from './ui/store/store';
-import App from './ui/App';
-import { animate } from './setup';
+function main() {
+	const root = document.getElementById('root');
+	const rootUI = document.getElementById('rootUI');
 
-animate();
+	initializeWorld(root).catch((err) => {
+		console.error(err);
+	});
+	initializeUI(rootUI);
+}
 
-// Render your React component instead
-const root = createRoot(document.getElementById('rootUI'));
-root.render(
-	<Provider store={store}>
-		<App />
-	</Provider>
-);
+main();
