@@ -2,6 +2,7 @@ mod utils;
 
 use legion::*;
 use wasm_bindgen::prelude::*;
+use web_sys::Storage;
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
@@ -12,15 +13,15 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-pub struct Game {
+pub struct GameManager {
     world: World,
     resources: Resources,
     schedule: Schedule,
 }
 
 #[wasm_bindgen]
-impl Game {
-    pub fn new() -> Game {
+impl GameManager {
+    pub fn new() -> GameManager {
         let world = World::default();
         let resources = Resources::default();
 
@@ -29,7 +30,7 @@ impl Game {
             // .add_system(update_positions_system())
             .build();
 
-        Game {
+        GameManager {
             world,
             resources,
             schedule,
@@ -49,9 +50,30 @@ impl Game {
     // }
 
     pub fn tick(&mut self) {
-        log!("tick");
+        // log!("tick");
 
         self.schedule.execute(&mut self.world, &mut self.resources);
+    }
+
+    pub fn load_save(&mut self) {
+        // TODO load saved game from local storage
+        // if no saved game, start new game
+        // let storage = new Storage();
+        // let gameSave = match Storage::get_item("game") {
+        //     Ok(Some(gameSave)) => gameSave,
+        //     Ok(None) => {
+        //         log!("No saved game found, starting new game");
+        //         let gameSave = String::from("new game");
+        //         Storage::set_item("game", &gameSave).unwrap();
+        //         gameSave
+        //     }
+        //     Err(err) => {
+        //         log!("Error loading saved game: {:?}", err);
+        //         String::from("new game")
+        //     }
+        // };
+        // log!("Loaded game: {}", gameSave);
+        // gameSave
     }
 }
 

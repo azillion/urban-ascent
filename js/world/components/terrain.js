@@ -1,5 +1,15 @@
 import * as THREE from 'three';
-import { ImprovedNoise } from './noise';
+import { globalEventManager } from '../../services/GlobalEventManager';
+// import { ImprovedNoise } from './noise';
+
+let terrain;
+
+const EVENTS = {
+	TERRAIN_CLICK: 'terrainClick',
+	TERRAIN_MOUSE_DOWN: 'terrainMouseDown',
+	TERRAIN_MOUSE_UP: 'terrainMouseUp',
+	TERRAIN_MOUSE_MOVE: 'terrainMouseMove',
+};
 
 function createTerrain() {
 	// const data = generateHeight(worldWidth, worldDepth);
@@ -22,7 +32,9 @@ function createTerrain() {
 		// wireframe: true,
 	});
 
-	const terrain = new THREE.Mesh(geometry, material);
+	terrain = new THREE.Mesh(geometry, material);
+	console.log(terrain.id)
+	terrain.position.y = 0;
 
 	// geometry.computeBoundingBox();
 	// let zMax = geometry.boundingBox.max.z;
@@ -37,36 +49,81 @@ function createTerrain() {
 	// terrain.rotation.x = Math.PI * -0.5;
 	// terrain.position.set(0,0,0);
 
+	registerBrowserEvents();
+
 	return terrain;
 }
 
-function generateHeight( width, height ) {
-	let seed = Math.PI / 4;
-	window.Math.random = function () {
-		const x = Math.sin( seed ++ ) * 10000;
-		return x - Math.floor( x );
-	};
-
-	const size = width * height, data = new Uint8Array( size );
-	const perlin = new ImprovedNoise(), z = Math.random() * 100;
-
-	let quality = 1;
-
-	for ( let j = 0; j < 4; j ++ ) {
-
-		for ( let i = 0; i < size; i ++ ) {
-
-			const x = i % width, y = ~ ~ ( i / width );
-			data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
-
+function registerBrowserEvents() {
+	const handleEvent = (gameEvent) => (intersections) => {
+		if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+			globalEventManager.dispatchEvent(gameEvent, intersections);
 		}
-
-		quality *= 5;
-
-	}
-
-	return data;
+	};
+	globalEventManager.registerEventListener('mousedown', handleEvent(EVENTS.TERRAIN_MOUSE_DOWN));
+	globalEventManager.registerEventListener('mouseup', handleEvent(EVENTS.TERRAIN_MOUSE_UP));
+	globalEventManager.registerEventListener('mousemove', handleEvent(EVENTS.TERRAIN_MOUSE_MOVE));
+	globalEventManager.registerEventListener('click', handleEvent(EVENTS.TERRAIN_CLICK));
 }
+
+// function handleEvent(gameEvent, ) {
+// 	if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+// 		globalEventManager.dispatchEvent(gameEvent, intersections);
+// 	}
+// }
+
+// function handleMouseDown(intersections) {
+// 	if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+// 		globalEventManager.dispatchEvent(EVENTS.TERRAIN_MOUSE_DOWN, intersections);
+// 	}
+// }
+
+// function handleMouseUp(intersections) {
+// 	if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+// 		globalEventManager.dispatchEvent(EVENTS.TERRAIN_MOUSE_UP, intersections);
+// 	}
+// }
+
+// function handleMouseMove(intersections) {
+// 	if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+// 		globalEventManager.dispatchEvent(EVENTS.TERRAIN_MOUSE_MOVE, intersections);
+// 	}
+// }
+
+// function handleClick(intersections) {
+// 	if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+// 		globalEventManager.dispatchEvent(EVENTS.TERRAIN_CLICK, intersections);
+// 	}
+// }
+
+
+// function generateHeight( width, height ) {
+// 	let seed = Math.PI / 4;
+// 	window.Math.random = function () {
+// 		const x = Math.sin( seed ++ ) * 10000;
+// 		return x - Math.floor( x );
+// 	};
+
+// 	const size = width * height, data = new Uint8Array( size );
+// 	const perlin = new ImprovedNoise(), z = Math.random() * 100;
+
+// 	let quality = 1;
+
+// 	for ( let j = 0; j < 4; j ++ ) {
+
+// 		for ( let i = 0; i < size; i ++ ) {
+
+// 			const x = i % width, y = ~ ~ ( i / width );
+// 			data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
+
+// 		}
+
+// 		quality *= 5;
+
+// 	}
+
+// 	return data;
+// }
 
 // function generateTexture(data, width, height) {
 // 	let context, image, imageData, shade;
@@ -133,4 +190,4 @@ function generateHeight( width, height ) {
 
 // }
 
-export { createTerrain };
+export { createTerrain, EVENTS as TERRAIN_EVENTS };
