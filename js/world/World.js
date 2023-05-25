@@ -66,6 +66,7 @@ class World {
 		scene.add(terrain, mainLight, ambientLight);
 
 		controls.target.copy(terrain.position);
+		controls.enabled = false;
 		camera.position.set(-40,30,40);
 		camera.lookAt(cube.position);
 

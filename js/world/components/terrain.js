@@ -56,7 +56,7 @@ function createTerrain() {
 
 function registerBrowserEvents() {
 	const handleEvent = (gameEvent) => (intersections) => {
-		if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id) {
+		if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id && intersections.length === 1) {
 			globalEventManager.dispatchEvent(gameEvent, intersections);
 		}
 	};

@@ -1,11 +1,10 @@
-import { globalEventManager } from '../../services/GlobalEventManager';
-import { TERRAIN_EVENTS } from '../components/terrain';
-import { handleTerrainClick } from './terrain';
+import initializeBuildingEventHandlers from './building';
+import initializeTerrainEventHandlers from './terrain';
 
 function initializeWorldEventHandlers() {
 	// Event handlers for the in-game world
-	globalEventManager.registerEventListener(TERRAIN_EVENTS.TERRAIN_CLICK, handleTerrainClick);
-
+	initializeTerrainEventHandlers();
+	initializeBuildingEventHandlers();
 }
 
 export { initializeWorldEventHandlers };
