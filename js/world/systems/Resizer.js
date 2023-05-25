@@ -10,6 +10,9 @@ const setSize = (container, camera, renderer) => {
 
 class Resizer {
   constructor(container, camera, renderer) {
+    this.container = container;
+    this.camera = camera;
+    this.renderer = renderer;
     setSize(container, camera, renderer);
   }
 
@@ -17,7 +20,7 @@ class Resizer {
     window.addEventListener("resize", () => {
       // set the size again if a resize occurs
       // throttle(() => setSize(container, camera, renderer), 200);
-      setSize(container, camera, renderer);
+      setSize(this.container, this.camera, this.renderer);
     });
   }
 }

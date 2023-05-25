@@ -1,10 +1,12 @@
-import React from 'react'
+import React from 'react';
+import DayNightButton from './objects/DayNightButton';
+
 
 export default function App() {
   return (
 	<div style={styles.root}>
 		<h1 style={styles.h1}>Urban Ascent</h1>
-		<button>Hello</button>
+		<DayNightButton />
 	</div>
   )
 }
@@ -12,7 +14,12 @@ export default function App() {
 const styles = {
 	root: {
 		textAlign: 'center',
-		pointerEvents: 'auto'
+		pointerEvents: 'auto',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		padding: '0 10px 0 10px',
 	},
 	h1: {
 		color: 'tomato',

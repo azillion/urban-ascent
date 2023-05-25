@@ -20,6 +20,10 @@ import { globalState } from '../services/GlobalState';
 import { globalEventManager } from '../services/GlobalEventManager';
 import { initializeWorldEventHandlers } from './event-handlers';
 
+const WORLD_EVENTS = Object.freeze({
+	TOGGLE_DAY_NIGHT: 'toggleDayNight',
+});
+
 let camera;
 let renderer;
 let scene;
@@ -61,7 +65,7 @@ class World {
 
 		// terrain.add(bunchOfShit);
 
-		const { mainLight, ambientLight} = createLights();
+		const { mainLight, ambientLight } = createLights();
 		
 		scene.add(terrain, mainLight, ambientLight);
 
@@ -106,8 +110,11 @@ class World {
 		// await loadSun();
 		// await loadMoon();
 	}
-	
 
+	scene() {
+		return scene;
+	}
+	
 	render() {
 		renderer.render(scene, camera);
 	}
@@ -176,4 +183,4 @@ class World {
 	}
 }
 
-export { World };
+export { World, WORLD_EVENTS };
