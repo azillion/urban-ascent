@@ -11,7 +11,7 @@ function initializeSceneEventHandlers() {
 function handleToggleDayNight(isDay) {
 	if (!world) return;
 
-	const scene = world.scene();
+	const scene = world.scene;
 	if (!scene) return;
 
 	const directionalLight = scene.getObjectByName('main-light');

@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 import { globalEventManager } from '../../services/GlobalEventManager';
 import { DragManager } from '../systems/DragManager';
 
@@ -24,6 +26,17 @@ class BuildingsManager {
 	getBuilding(id) {
 		return this.buildingHashMap.get(id);
 	}
+
+	checkCollision(box1, box2) {
+		// Create bounding boxes for the two boxes
+		const boundingBox1 = new THREE.Box3().setFromObject(box1);
+		const boundingBox2 = new THREE.Box3().setFromObject(box2);
+
+		// Check for collision
+		const hasCollided = boundingBox1.intersectsBox(boundingBox2);
+
+		return hasCollided;
+	}
 }
 
 const buildingsManager = new BuildingsManager();
@@ -36,9 +49,9 @@ class Building {
 	}
 
 	registerBrowserEvents() {
-		const handleEvent = (gameEvent) => (intersections) => {
-			if (this.mesh && intersections.length > 0 && intersections[0].object.id === this.mesh.id) {
-				globalEventManager.dispatchEvent(gameEvent, intersections);
+		const handleEvent = (gameEvent) => (intersections, event) => {
+			if (this.mesh) {
+				globalEventManager.dispatchEvent(gameEvent, intersections, event);
 			}
 		};
 		globalEventManager.registerEventListener('mousedown', handleEvent(EVENTS.BUILDING_MOUSE_DOWN));

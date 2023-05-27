@@ -22,6 +22,7 @@ import { initializeWorldEventHandlers } from './event-handlers';
 
 const WORLD_EVENTS = Object.freeze({
 	TOGGLE_DAY_NIGHT: 'toggleDayNight',
+	TOGGLE_PAUSE_PLAY: 'togglePausePlay',
 });
 
 let camera;
@@ -31,6 +32,7 @@ let loop;
 let resizer;
 let mouse;
 let raycaster;
+let terrain;
 
 class World {
 	constructor(container) {
@@ -49,7 +51,7 @@ class World {
 		// const clouds = createClouds(100, 100, 1.5);
 
 		const cube = createCube();
-		const terrain = createTerrain();
+		terrain = createTerrain();
 		terrain.add(cube);
 		cube.position.y = cube.geometry.parameters.height / 2 + 0.1;
 		// const pathGroup = new PathGroup([new Vector2(5, 0), new Vector2(15, 10)], false);
@@ -86,6 +88,9 @@ class World {
 		raycaster = new Raycaster();
 		this.setupInteractions();
 
+		this.isDragging = false;
+		this.draggedEntity = null;
+
 		// controls.addEventListener('change', () => {
 		// 	// this.render();
 		// });
@@ -111,8 +116,20 @@ class World {
 		// await loadMoon();
 	}
 
-	scene() {
+	get scene() {
 		return scene;
+	}
+
+	get camera() {
+		return camera;
+	}
+
+	get domElement() {
+		return renderer.domElement;
+	}
+
+	get terrain() {
+		return terrain;
 	}
 	
 	render() {
@@ -144,14 +161,14 @@ class World {
 		const mouseEventHandler = (eventString) => {
 				canvas.addEventListener(eventString, (event) => {
 					// Calculate normalized device coordinates (-1 to +1) for the mouse
-					mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-					mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+					mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+					mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
 					// Set the raycaster's origin and direction based on the mouse position
 					raycaster.setFromCamera(mouse, camera);
 
-					var intersects = raycaster.intersectObjects(scene.children, true);
-					globalEventManager.dispatchEvent(eventString, intersects);
+					const intersects = raycaster.intersectObjects(scene.children, true);
+					globalEventManager.dispatchEvent(eventString, intersects, event);
 			}, false);
 		};
 		mouseEventHandler('click');

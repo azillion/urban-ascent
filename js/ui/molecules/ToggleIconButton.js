@@ -1,6 +1,16 @@
 import React from 'react'
 import IconButton from '../atoms/IconButton';
 
+const defaultStyle = {
+	width: '40px',
+	height: '40px',
+	borderRadius: '4px',
+	backgroundColor: 'grey',
+	border: 'none',
+	outline: 'none',
+	margin: '5px'
+};
+
 export default function ToggleIconButton({
 	handleOnClick,
 	isOnDefault = true,
@@ -8,7 +18,7 @@ export default function ToggleIconButton({
 	iconOff,
 	iconOnStyle = {},
 	iconOffStyle = {},
-	buttonStyle = {},
+	buttonStyle = defaultStyle,
 	iconProps = {},
 }) {
 	const [isOn, setIsOn] = React.useState(isOnDefault);

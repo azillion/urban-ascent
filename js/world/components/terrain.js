@@ -4,7 +4,7 @@ import { globalEventManager } from '../../services/GlobalEventManager';
 
 let terrain;
 
-const EVENTS = {
+const TERRAIN_EVENTS = {
 	TERRAIN_CLICK: 'terrainClick',
 	TERRAIN_MOUSE_DOWN: 'terrainMouseDown',
 	TERRAIN_MOUSE_UP: 'terrainMouseUp',
@@ -33,7 +33,6 @@ function createTerrain() {
 	});
 
 	terrain = new THREE.Mesh(geometry, material);
-	console.log(terrain.id)
 	terrain.position.y = 0;
 
 	// geometry.computeBoundingBox();
@@ -48,22 +47,24 @@ function createTerrain() {
 
 	// terrain.rotation.x = Math.PI * -0.5;
 	// terrain.position.set(0,0,0);
+	terrain.receiveShadow = true;
 
 	registerBrowserEvents();
+	terrain.name = 'terrain';
 
 	return terrain;
 }
 
 function registerBrowserEvents() {
-	const handleEvent = (gameEvent) => (intersections) => {
-		if (terrain && intersections.length > 0 && intersections[0].object.id === terrain.id && intersections.length === 1) {
-			globalEventManager.dispatchEvent(gameEvent, intersections);
+	const handleEvent = (gameEvent) => (intersections, event) => {
+		if (intersections.filter((intersection) => intersection.object.name === 'terrain').length > 0) {
+			globalEventManager.dispatchEvent(gameEvent, intersections, event);
 		}
 	};
-	globalEventManager.registerEventListener('mousedown', handleEvent(EVENTS.TERRAIN_MOUSE_DOWN));
-	globalEventManager.registerEventListener('mouseup', handleEvent(EVENTS.TERRAIN_MOUSE_UP));
-	globalEventManager.registerEventListener('mousemove', handleEvent(EVENTS.TERRAIN_MOUSE_MOVE));
-	globalEventManager.registerEventListener('click', handleEvent(EVENTS.TERRAIN_CLICK));
+	globalEventManager.registerEventListener('mousedown', handleEvent(TERRAIN_EVENTS.TERRAIN_MOUSE_DOWN));
+	globalEventManager.registerEventListener('mouseup', handleEvent(TERRAIN_EVENTS.TERRAIN_MOUSE_UP));
+	globalEventManager.registerEventListener('mousemove', handleEvent(TERRAIN_EVENTS.TERRAIN_MOUSE_MOVE));
+	globalEventManager.registerEventListener('click', handleEvent(TERRAIN_EVENTS.TERRAIN_CLICK));
 }
 
 // function handleEvent(gameEvent, ) {
@@ -190,4 +191,4 @@ function registerBrowserEvents() {
 
 // }
 
-export { createTerrain, EVENTS as TERRAIN_EVENTS };
+export { createTerrain, TERRAIN_EVENTS };

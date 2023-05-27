@@ -19,13 +19,13 @@ class GlobalEventManager {
 		_listeners[event].splice(_listeners[event].indexOf(listener), 1);
 	}
 
-	dispatchEvent(event, data) {
-		if (!_listeners[event]) {
+	dispatchEvent(eventString, data, event) {
+		if (!_listeners[eventString]) {
 			return;
 		}
-		for (let i = 0; i < _listeners[event].length; i++) {
-			const listener = _listeners[event][i];
-			listener(data);
+		for (let i = 0; i < _listeners[eventString].length; i++) {
+			const listener = _listeners[eventString][i];
+			listener(data, event);
 		}
 	}
 

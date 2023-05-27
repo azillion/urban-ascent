@@ -1,12 +1,15 @@
 import React from 'react';
 import DayNightButton from './objects/DayNightButton';
-
+import PausePlayButton from './objects/PausePlayButton';
 
 export default function App() {
   return (
 	<div style={styles.root}>
 		<h1 style={styles.h1}>Urban Ascent</h1>
-		<DayNightButton />
+		<div style={styles.topNavButtons}>
+			<DayNightButton />
+			<PausePlayButton />
+		</div>
 	</div>
   )
 }
@@ -27,5 +30,11 @@ const styles = {
 		background: '-webkit-linear-gradient(45deg, #B2A4FF, #0080FF 100%)',
 		WebkitBackgroundClip: 'text',
 		WebkitTextFillColor: 'transparent',
-	}
+	},
+	topNavButtons: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
 }

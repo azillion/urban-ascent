@@ -5,15 +5,6 @@ import ToggleIconButton from '../molecules/ToggleIconButton';
 import { globalEventManager } from '../../services/GlobalEventManager';
 import { WORLD_EVENTS } from '../../world/world';
 
-const buttonStyle = {
-	width: '40px',
-	height: '40px',
-	borderRadius: '4px',
-	backgroundColor: 'grey',
-	border: 'none',
-	outline: 'none',
-};
-
 export default function DayNightButton() {
 	const handleOnClick = (isDay) => {
 		globalEventManager.dispatchEvent(WORLD_EVENTS.TOGGLE_DAY_NIGHT, isDay);
@@ -26,7 +17,6 @@ export default function DayNightButton() {
 			handleOnClick={handleOnClick}
 			iconOffStyle={{color: 'black'}}
 			iconOnStyle={{color: 'gold'}}
-			buttonStyle={buttonStyle}
 		/>
 	);
 }
