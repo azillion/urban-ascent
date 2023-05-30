@@ -112,6 +112,7 @@ pub struct GameData {
     player_name: String,
     grid_height: usize,
     grid_width: usize,
+    world_data_serialized: Option<String>,
 }
 
 impl GameData {
@@ -128,11 +129,20 @@ impl GameData {
             player_name: player_name.chars().take(MAX_LENGTH).collect(),
             grid_height: 1000,
             grid_width: 1000,
+            world_data_serialized: None,
             // world: World::default(),
         }
     }
 
     pub fn get_grid_size(&self) -> (usize, usize) {
         (self.grid_width, self.grid_height)
+    }
+
+    pub fn get_grid_width(&self) -> usize {
+        self.grid_width
+    }
+
+    pub fn get_grid_height(&self) -> usize {
+        self.grid_height
     }
 }

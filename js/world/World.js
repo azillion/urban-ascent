@@ -20,6 +20,7 @@ import { globalEventManager } from '../services/GlobalEventManager';
 import { initializeWorldEventHandlers } from './event-handlers';
 import { createGrid } from './components/grid';
 import { UrbanAscent } from '../../pkg';
+import { memory } from '../../pkg/index_bg';
 
 const WORLD_EVENTS = Object.freeze({
 	TOGGLE_DAY_NIGHT: 'toggleDayNight',
@@ -44,6 +45,10 @@ class World {
 		this.gameManager = new UrbanAscent();
 		this.globalState = globalState;
 		this.loadGame();
+		this.gridSize = {
+			width: this.gameManager.getGridWidth() || DEFAULT_WIDTH,
+			height: this.gameManager.getGridHeight() || DEFAULT_HEIGHT,
+		};
 		camera = createCamera();
 		renderer = createRenderer();
 		scene = createScene();
@@ -54,14 +59,14 @@ class World {
 		
 		controls = createControls(camera, this.canvas);
 
-		terrain = createTerrain(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		terrain = createTerrain(this.gridSize.width, this.gridSize.height);
 
 		// origin cube
 		const cube = createCube();
 		terrain.add(cube);
 		cube.position.y = cube.geometry.parameters.height / 2 + 0.1;
 
-		const grid = createGrid(DEFAULT_WIDTH, 1000)
+		const grid = createGrid(this.gridSize.width, this.gridSize.height);
 		scene.add(grid);
 
 		const { mainLight, ambientLight } = createLights();

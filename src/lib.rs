@@ -79,4 +79,14 @@ impl UrbanAscent {
     pub fn set_player_name(&mut self, player_name: String) {
         self.game_manager.set_player_name(player_name);
     }
+
+    #[wasm_bindgen(js_name = "getGridWidth")]
+    pub fn get_grid_width(&self) -> usize {
+        self.game_manager.get_game_data_ref().get_grid_width()
+    }
+
+    #[wasm_bindgen(js_name = "getGridHeight")]
+    pub fn get_grid_height(&self) -> usize {
+        self.game_manager.get_game_data_ref().get_grid_height()
+    }
 }
