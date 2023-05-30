@@ -14,6 +14,7 @@ function handleMouseDown(intersections) {
 	if (cube.name !== 'building') return;
 	const building = buildingsManager.getBuilding(cube.id);
 	if (!building) return;
+	world.controls.enabled = false;
 	world.isDragging = true;
 	world.draggedEntity = building;
 	building.dragManager.onMouseDown(intersections);
@@ -30,6 +31,7 @@ function handleMouseUp(intersections) {
 	const building = world.draggedEntity;
 	if (!building) return;
 	building.dragManager.onMouseUp(intersections);
+	world.controls.enabled = true;
 	world.isDragging = false;
 	world.draggedEntity = null;
 }

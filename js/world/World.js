@@ -15,15 +15,19 @@ import { Resizer } from './systems/Resizer';
 import { Loop } from './systems/Loop';
 import { createControls } from './systems/controls';
 
-import { GameManager } from '../../pkg';
 import { globalState } from '../services/GlobalState';
 import { globalEventManager } from '../services/GlobalEventManager';
 import { initializeWorldEventHandlers } from './event-handlers';
+import { createGrid } from './components/grid';
+import { UrbanAscent } from '../../pkg';
 
 const WORLD_EVENTS = Object.freeze({
 	TOGGLE_DAY_NIGHT: 'toggleDayNight',
 	TOGGLE_PAUSE_PLAY: 'togglePausePlay',
 });
+
+const DEFAULT_WIDTH = 1000;
+const DEFAULT_HEIGHT = 1000;
 
 let camera;
 let renderer;
@@ -33,11 +37,13 @@ let resizer;
 let mouse;
 let raycaster;
 let terrain;
+let controls
 
 class World {
 	constructor(container) {
-		this.gameManager = GameManager.new();
+		this.gameManager = new UrbanAscent();
 		this.globalState = globalState;
+		this.loadGame();
 		camera = createCamera();
 		renderer = createRenderer();
 		scene = createScene();
@@ -46,40 +52,29 @@ class World {
 		container.appendChild(renderer.domElement);
 		this.canvas = renderer.domElement;
 		
-		const controls = createControls(camera, this.canvas);
-		// const skybox = createSkybox();
-		// const clouds = createClouds(100, 100, 1.5);
+		controls = createControls(camera, this.canvas);
 
+		terrain = createTerrain(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
+		// origin cube
 		const cube = createCube();
-		terrain = createTerrain();
 		terrain.add(cube);
 		cube.position.y = cube.geometry.parameters.height / 2 + 0.1;
-		// const pathGroup = new PathGroup([new Vector2(5, 0), new Vector2(15, 10)], false);
-		// const path = pathGroup.getPath();
-		// terrain.add(path);
-		// path.position.set(5, 0.1, 0);
 
-		// const road = createRoad(15);
-		// terrain.add(road);
-		// road.position.set(5, 0.1, 0);
-
-		// const bunchOfShit = createBunchOfShit();
-
-		// terrain.add(bunchOfShit);
+		const grid = createGrid(DEFAULT_WIDTH, 1000)
+		scene.add(grid);
 
 		const { mainLight, ambientLight } = createLights();
 		
 		scene.add(terrain, mainLight, ambientLight);
 
 		controls.target.copy(terrain.position);
-		controls.enabled = false;
+		// controls.enabled = false;
 		camera.position.set(-40,30,40);
 		camera.lookAt(cube.position);
 
-		// loop.updatables.push(cube);
-		loop.updatables.push(this.gameManager)
+		loop.updatables.push(this.gameManager) // runs the game loop
 		loop.updatables.push(controls);
-		// loop.updatables.push(bunchOfShit);
 
 		resizer = new Resizer(container, camera, renderer);
 		resizer.registerEvents();
@@ -90,6 +85,8 @@ class World {
 
 		this.isDragging = false;
 		this.draggedEntity = null;
+		
+		
 
 		// controls.addEventListener('change', () => {
 		// 	// this.render();
@@ -116,6 +113,15 @@ class World {
 		// await loadMoon();
 	}
 
+	loadGame() {
+		const isLoaded = this.gameManager.loadGame();
+		if (!isLoaded) {
+			this.gameManager.newGame('Tutoria', 'azillion');
+			this.gameManager.loadGame();
+		}
+		console.log(this.gameManager.getTownName());
+	}
+
 	get scene() {
 		return scene;
 	}
@@ -130,6 +136,10 @@ class World {
 
 	get terrain() {
 		return terrain;
+	}
+
+	get controls() {
+		return controls;
 	}
 	
 	render() {
@@ -175,6 +185,7 @@ class World {
 		mouseEventHandler('mousemove');
 		mouseEventHandler('mousedown');
 		mouseEventHandler('mouseup');
+		canvas.addEventListener('contextmenu', (event) => event.preventDefault());
 		// mouseEventHandler('touchstart');
 		// mouseEventHandler('touchend');
 		// mouseEventHandler('touchmove');

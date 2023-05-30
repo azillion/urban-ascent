@@ -1,4 +1,5 @@
 import { MapControls } from 'three/examples/jsm/controls/MapControls';
+import { world } from '..';
 
 function createControls(camera, canvas) {
 	const controls = new MapControls(camera, canvas);
@@ -17,6 +18,7 @@ function createControls(camera, canvas) {
 	// };
 
 	controls.tick = () => {
+		if (world.isDragging) return;
 		if (controls.enabled === false) return;
 
 		if (controls.target.y < 0) {

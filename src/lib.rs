@@ -1,8 +1,9 @@
+mod manager;
+mod person;
 mod utils;
 
-use legion::*;
+use manager::GameManager;
 use wasm_bindgen::prelude::*;
-use web_sys::Storage;
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
@@ -11,71 +12,6 @@ use web_sys::Storage;
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[wasm_bindgen]
-pub struct GameManager {
-    world: World,
-    resources: Resources,
-    schedule: Schedule,
-}
-
-#[wasm_bindgen]
-impl GameManager {
-    pub fn new() -> GameManager {
-        let world = World::default();
-        let resources = Resources::default();
-
-        // construct a schedule (you should do this on init)
-        let schedule = Schedule::builder()
-            // .add_system(update_positions_system())
-            .build();
-
-        GameManager {
-            world,
-            resources,
-            schedule,
-        }
-    }
-
-    // fn world(&self) -> &World {
-    //     &self.world
-    // }
-
-    // fn resources(&self) -> &Resources {
-    //     &self.resources
-    // }
-
-    // fn schedule(&self) -> &Schedule {
-    //     &self.schedule
-    // }
-
-    pub fn tick(&mut self) {
-        // log!("tick");
-
-        self.schedule.execute(&mut self.world, &mut self.resources);
-    }
-
-    pub fn load_save(&mut self) {
-        // TODO load saved game from local storage
-        // if no saved game, start new game
-        // let storage = new Storage();
-        // let gameSave = match Storage::get_item("game") {
-        //     Ok(Some(gameSave)) => gameSave,
-        //     Ok(None) => {
-        //         log!("No saved game found, starting new game");
-        //         let gameSave = String::from("new game");
-        //         Storage::set_item("game", &gameSave).unwrap();
-        //         gameSave
-        //     }
-        //     Err(err) => {
-        //         log!("Error loading saved game: {:?}", err);
-        //         String::from("new game")
-        //     }
-        // };
-        // log!("Loaded game: {}", gameSave);
-        // gameSave
-    }
-}
 
 // This is like the `main` function, except for JavaScript.
 #[wasm_bindgen(start)]
@@ -87,13 +23,60 @@ pub fn main_js() -> Result<(), JsValue> {
 
     log!("Hello Urban Ascent!");
 
-    // TODO load saved game from local storage
-    // if no saved game, start new game
-
-    // construct a schedule (you should do this on init)
-    // let mut schedule = Schedule::builder()
-    //     .add_system(update_positions_system())
-    //     .build();
-
     Ok(())
+}
+
+#[wasm_bindgen]
+pub struct UrbanAscent {
+    game_manager: Box<GameManager>,
+}
+
+#[wasm_bindgen]
+impl UrbanAscent {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> UrbanAscent {
+        let game_manager = GameManager::new();
+        UrbanAscent {
+            game_manager: Box::new(game_manager),
+        }
+    }
+
+    pub fn tick(&mut self) {
+        self.game_manager.tick();
+    }
+
+    #[wasm_bindgen(js_name = "newGame")]
+    pub fn new_game(&mut self, town_name: String, player_name: String) {
+        self.game_manager.new_game(town_name, player_name);
+    }
+
+    #[wasm_bindgen(js_name = "saveGame")]
+    pub fn save_game(&self) {
+        self.game_manager.save_game();
+    }
+
+    #[wasm_bindgen(js_name = "loadGame")]
+    pub fn load_game(&mut self) -> Result<bool, JsValue> {
+        self.game_manager.load_game()
+    }
+
+    #[wasm_bindgen(js_name = "getTownName")]
+    pub fn get_town_name(&self) -> String {
+        self.game_manager.get_town_name()
+    }
+
+    #[wasm_bindgen(js_name = "setTownName")]
+    pub fn set_town_name(&mut self, town_name: String) {
+        self.game_manager.set_town_name(town_name);
+    }
+
+    #[wasm_bindgen(js_name = "getPlayerName")]
+    pub fn get_player_name(&self) -> String {
+        self.game_manager.get_player_name()
+    }
+
+    #[wasm_bindgen(js_name = "setPlayerName")]
+    pub fn set_player_name(&mut self, player_name: String) {
+        self.game_manager.set_player_name(player_name);
+    }
 }

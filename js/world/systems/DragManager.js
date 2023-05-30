@@ -14,11 +14,16 @@ class DragManager {
 	onMouseMove(intersections) {
 		if (!this.isDragging) return;
 		let terrain;
+		let count = 0;
 		for (const intersection of intersections) {
 			if (intersection.object.name === 'terrain') {
 				terrain = intersection;
 			}
+			if (intersection.object.name === 'building') {
+				count++;
+			}
 		}
+		if (count > 1) return;
 		const pos = terrain.point;
 		pos.y = this.draggedEntity.position.y;
 		this.draggedEntity.position.copy(pos);

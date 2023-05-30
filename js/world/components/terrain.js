@@ -11,10 +11,10 @@ const TERRAIN_EVENTS = {
 	TERRAIN_MOUSE_MOVE: 'terrainMouseMove',
 };
 
-function createTerrain() {
+function createTerrain(width, height) {
 	// const data = generateHeight(worldWidth, worldDepth);
 	// const geometry = new THREE.PlaneGeometry(7500, 7500, worldWidth - 1, worldDepth - 1);
-	const geometry = new THREE.PlaneGeometry(10000, 10000, 1, 1);
+	const geometry = new THREE.PlaneGeometry(width, height, 1, 1);
 	geometry.rotateX( - Math.PI / 2 );
 
 	// const vertices = geometry.attributes.position.array;
