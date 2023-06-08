@@ -14,7 +14,7 @@ const TERRAIN_EVENTS = {
 function createTerrain(width, height) {
 	// const data = generateHeight(worldWidth, worldDepth);
 	// const geometry = new THREE.PlaneGeometry(7500, 7500, worldWidth - 1, worldDepth - 1);
-	const geometry = new THREE.PlaneGeometry(width, height, 1, 1);
+	const geometry = new THREE.PlaneGeometry(width, height, 100, 100);
 	geometry.rotateX( - Math.PI / 2 );
 
 	// const vertices = geometry.attributes.position.array;

@@ -21,13 +21,18 @@ impl GameManager {
         let game_save_key = "game-0.1.0";
 
         let storage = window().unwrap().local_storage().unwrap().unwrap_throw();
-        Self {
+
+        let mut game_manager = Self {
             storage,
             game_save_key,
             game_data: None,
             grid: None,
-        }
+        };
+        game_manager.setup_database();
+        game_manager
     }
+
+    fn setup_database(&mut self) {}
 
     pub fn tick(&mut self) {
         if self.game_data.is_none() || self.grid.is_none() {

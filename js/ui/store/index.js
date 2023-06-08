@@ -1,8 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit'
-import toolbarReducer from './toolbar'
+import { configureStore } from '@reduxjs/toolkit';
+import entities from './entities';
 
 export default configureStore({
-  reducer: {
-  toolbarReducer
-  }
-})
+	reducer: entities,
+	devTools: true,
+});

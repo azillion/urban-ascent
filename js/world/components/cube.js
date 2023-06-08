@@ -7,11 +7,11 @@ function createCube() {
 	// create a default (white) Basic material
 	const material = new MeshStandardMaterial({
 		color: "firebrick",
-		// flatShading: true,
 	});
 
 	// create a Mesh containing the geometry and material
 	const cube = new Mesh(geometry, material);
+	cube.castShadow = true;
 
 	const radiansPerSecond = MathUtils.degToRad(30);
 

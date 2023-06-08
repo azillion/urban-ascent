@@ -17,6 +17,7 @@ export default function DayNightButton() {
 			handleOnClick={handleOnClick}
 			iconOffStyle={{color: 'black'}}
 			iconOnStyle={{color: 'gold'}}
+			buttonStyle={{ background: 'linear-gradient(45deg, #B2A4FF, #0080FF 100%)' }}
 		/>
 	);
 }

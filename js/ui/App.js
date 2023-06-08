@@ -1,40 +1,67 @@
 import React from 'react';
-import DayNightButton from './objects/DayNightButton';
-import PausePlayButton from './objects/PausePlayButton';
+import { useSelector } from 'react-redux';
+
+import StartMenu from './organisms/StartMenu';
+import MainGameUILayout from './organisms/MainGameUILayout';
+import { getGameLoaded } from './store/game';
 
 export default function App() {
-  return (
-	<div style={styles.root}>
-		<h1 style={styles.h1}>Urban Ascent</h1>
-		<div style={styles.topNavButtons}>
-			<DayNightButton />
-			<PausePlayButton />
+	const hasGameLoaded = useSelector(getGameLoaded);
+	console.log('hasGameLoaded', hasGameLoaded);
+	return (
+		<div style={styles.root}>
+			{hasGameLoaded ? 
+				(
+					<MainGameUILayout />
+				)
+				: 
+				(
+					<StartMenu />
+				)
+			}
 		</div>
-	</div>
-  )
+	)
 }
 
 const styles = {
 	root: {
-		textAlign: 'center',
-		pointerEvents: 'auto',
+		pointerEvents: 'none',
+		width: '100%',
+		height: '100%',
 		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+	},
+	topContainer: {
+		display: 'flex',
+		flexBasis: '10%',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		padding: '0 10px 0 10px',
 	},
-	h1: {
+	middleContainer: {
+		display: 'flex',
+		flexBasis: '75%',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'stretch',
+		margin: '10px',
+	},
+	bottomContainer: {
+		display: 'flex',
+		flexBasis: '15%',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'stretch',
+		margin: '10px',
+	},
+	title: {
+		textAlign: 'center',
 		color: 'tomato',
 		fontFamily: 'sans-serif',
 		background: '-webkit-linear-gradient(45deg, #B2A4FF, #0080FF 100%)',
 		WebkitBackgroundClip: 'text',
 		WebkitTextFillColor: 'transparent',
 	},
-	topNavButtons: {
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-}
+};

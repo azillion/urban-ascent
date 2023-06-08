@@ -37,6 +37,8 @@ export default function ToggleIconButton({
 		}
 	};
 	if (!icon) return null;
+
+	buttonStyle = {...defaultStyle, ...buttonStyle};
 	
 	return (
 		<IconButton 

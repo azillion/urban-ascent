@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
-export const toolbarSlice = createSlice({
-  name: 'toolbar',
+const slice = createSlice({
+  name: 'bottomToolbar',
   initialState: {
     value: 0
   },
@@ -20,9 +20,9 @@ export const toolbarSlice = createSlice({
       state.value += action.payload
     }
   }
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = toolbarSlice.actions
+export const { increment, decrement, incrementByAmount } = slice.actions;
 
-export default toolbarSlice.reducer
+export default slice.reducer;

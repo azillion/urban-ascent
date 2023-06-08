@@ -20,11 +20,12 @@ import { globalEventManager } from '../services/GlobalEventManager';
 import { initializeWorldEventHandlers } from './event-handlers';
 import { createGrid } from './components/grid';
 import { UrbanAscent } from '../../pkg';
-import { memory } from '../../pkg/index_bg';
 
 const WORLD_EVENTS = Object.freeze({
 	TOGGLE_DAY_NIGHT: 'toggleDayNight',
 	TOGGLE_PAUSE_PLAY: 'togglePausePlay',
+	GAME_HAS_LOADED: 'gameHasLoaded',
+	TOOL_MODE_CHANGED: 'toolModeChanged',
 });
 
 const DEFAULT_WIDTH = 1000;
@@ -67,6 +68,7 @@ class World {
 		cube.position.y = cube.geometry.parameters.height / 2 + 0.1;
 
 		const grid = createGrid(this.gridSize.width, this.gridSize.height);
+		grid.visible = false;
 		scene.add(grid);
 
 		const { mainLight, ambientLight } = createLights();
@@ -74,8 +76,7 @@ class World {
 		scene.add(terrain, mainLight, ambientLight);
 
 		controls.target.copy(terrain.position);
-		// controls.enabled = false;
-		camera.position.set(-40,30,40);
+		camera.position.set(-40,50,60);
 		camera.lookAt(cube.position);
 
 		loop.updatables.push(this.gameManager) // runs the game loop
@@ -90,13 +91,8 @@ class World {
 
 		this.isDragging = false;
 		this.draggedEntity = null;
-		
-		
 
-		// controls.addEventListener('change', () => {
-		// 	// this.render();
-		// });
-		
+		this.controlsOffAndRotate();
 	}
 
 	async init() {
@@ -146,6 +142,22 @@ class World {
 	get controls() {
 		return controls;
 	}
+
+	controlsOffAndRotate() {
+		controls.enabled = false;
+		controls.autoRotate = true;
+		try {
+			controls.stopListenToKeyEvents();
+		} catch(e) { /* empty */ }
+		controls.update();
+	}
+
+	controlsOnAndStopRotate() {
+		controls.enabled = true;
+		controls.autoRotate = false;
+		controls.listenToKeyEvents(window);
+		controls.update();
+	}
 	
 	render() {
 		renderer.render(scene, camera);
@@ -183,7 +195,8 @@ class World {
 					raycaster.setFromCamera(mouse, camera);
 
 					const intersects = raycaster.intersectObjects(scene.children, true);
-					globalEventManager.dispatchEvent(eventString, intersects, event);
+					if (intersects.length > 0)
+						globalEventManager.dispatchEvent(eventString, intersects, event);
 			}, false);
 		};
 		mouseEventHandler('click');

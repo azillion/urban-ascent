@@ -17,6 +17,7 @@ export default function PausePlayButton() {
 			handleOnClick={handleOnClick}
 			iconOffStyle={{ color: 'tomato' }}
 			iconOnStyle={{ color: 'white' }}
+			buttonStyle={{ background: 'linear-gradient(45deg, #B2A4FF, #0080FF 100%)' }}
 		/>
-	)
+	);
 }
