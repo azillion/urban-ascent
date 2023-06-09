@@ -24,6 +24,7 @@ export default function TextButton({handleOnClick, title, textStyle={}, buttonSt
 			onMouseDown={handleOnMouseDown}
 			onMouseUp={handleOnMouseUp}
 			style={buttonStylesCombined}
+			disabled={disabled}
 		>
 			<span style={{...styles.defaultTextStyle, ...textStyle}}>{title}</span>
 		</button>

@@ -1,7 +1,7 @@
 import { Color, Fog, Scene } from 'three';
 
 const SKY_COLOR_DAY = 'skyblue';
-const SKY_COLOR_NIGHT = 'midnightblue';
+const SKY_COLOR_NIGHT = 'black';
 
 function createScene() {
 	const scene = new Scene();

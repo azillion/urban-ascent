@@ -76,6 +76,15 @@ impl GameManager {
         Ok(false)
     }
 
+    pub fn has_continued_game(&self) -> bool {
+        if let Ok(value) = self.storage.get_item(self.game_save_key) {
+            if let Some(value) = value {
+                return true;
+            }
+        }
+        false
+    }
+
     pub fn get_game_data_ref(&self) -> &GameData {
         self.game_data.as_ref().unwrap()
     }

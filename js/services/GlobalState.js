@@ -7,6 +7,7 @@ class GlobalState {
 	constructor() {
 		this.toolMode = TOOL_MODES.PAN;
 		this._gameHasLoaded = false;
+		this.gameManager = undefined;
 	}
 
 	setToolMode(toolMode) {

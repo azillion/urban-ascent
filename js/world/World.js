@@ -44,6 +44,7 @@ let controls
 class World {
 	constructor(container) {
 		this.gameManager = new UrbanAscent();
+		globalState.gameManager = this.gameManager;
 		this.globalState = globalState;
 		this.loadGame();
 		this.gridSize = {

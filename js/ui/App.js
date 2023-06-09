@@ -7,18 +7,9 @@ import { getGameLoaded } from './store/game';
 
 export default function App() {
 	const hasGameLoaded = useSelector(getGameLoaded);
-	console.log('hasGameLoaded', hasGameLoaded);
 	return (
 		<div style={styles.root}>
-			{hasGameLoaded ? 
-				(
-					<MainGameUILayout />
-				)
-				: 
-				(
-					<StartMenu />
-				)
-			}
+			{hasGameLoaded ? <MainGameUILayout /> : <StartMenu />}
 		</div>
 	)
 }

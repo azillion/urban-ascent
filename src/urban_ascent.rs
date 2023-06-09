@@ -35,6 +35,11 @@ impl UrbanAscent {
         self.game_manager.load_game()
     }
 
+    #[wasm_bindgen(js_name = "hasContinuedGame")]
+    pub fn has_continued_game(&self) -> bool {
+        self.game_manager.has_continued_game()
+    }
+
     #[wasm_bindgen(js_name = "getTownName")]
     pub fn get_town_name(&self) -> String {
         self.game_manager.get_town_name()
