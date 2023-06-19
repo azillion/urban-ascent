@@ -41,7 +41,7 @@ export default function IconButton({
 const styles = {
 	hoverButtonStyle: {
 		boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-		transform: 'scale(1.05)',
+		transform: 'scale(1.03)',
 	},
 	activeButtonStyle: {
 		boxShadow: 'none',

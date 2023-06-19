@@ -4,5 +4,11 @@
 		"pathfinding",
 		"resizer",
 		"updatables"
+	],
+	"rust-analyzer.linkedProjects": [
+		"./Cargo.toml",
+		"./Cargo.toml",
+		"./Cargo.toml",
+		"./Cargo.toml"
 	]
 }

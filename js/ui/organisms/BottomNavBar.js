@@ -1,5 +1,6 @@
 import React from 'react';
 import PausePlayButton from './PausePlayButton';
+import StraightRoadButton from './StraightRoadButton';
 
 const styles = {
 	bottomNavBarContainer: {
@@ -22,6 +23,7 @@ export default function BottomNavBar() {
 		<div id="bottom-nav-bar" style={styles.bottomNavBarContainer}>
 			<div style={styles.row}>
 				<PausePlayButton />
+				<StraightRoadButton />
 			</div>
 		</div>	
 	)

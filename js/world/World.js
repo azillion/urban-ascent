@@ -20,6 +20,7 @@ import { globalEventManager } from '../services/GlobalEventManager';
 import { initializeWorldEventHandlers } from './event-handlers';
 import { createGrid } from './components/grid';
 import { UrbanAscent } from '../../pkg';
+import { createRoadCreationNode } from './components/paths/node';
 
 const WORLD_EVENTS = Object.freeze({
 	TOGGLE_DAY_NIGHT: 'toggleDayNight',
@@ -68,9 +69,9 @@ class World {
 		terrain.add(cube);
 		cube.position.y = cube.geometry.parameters.height / 2 + 0.1;
 
-		const grid = createGrid(this.gridSize.width, this.gridSize.height);
-		grid.visible = false;
-		scene.add(grid);
+		this.grid = createGrid(this.gridSize.width, this.gridSize.height);
+		this.grid.visible = false;
+		scene.add(this.grid);
 
 		const { mainLight, ambientLight } = createLights();
 		
@@ -91,7 +92,12 @@ class World {
 		this.setupInteractions();
 
 		this.isDragging = false;
+		this.isDrawing = false;
 		this.draggedEntity = null;
+		this.currentPath = null;
+		this.pathStartPoint = null;
+
+		this._pathCreationNode = null;
 
 		this.controlsOffAndRotate();
 	}
@@ -142,6 +148,24 @@ class World {
 
 	get controls() {
 		return controls;
+	}
+
+	get pathCreationNode() {
+		if (!this._pathCreationNode) {
+			this._pathCreationNode = createRoadCreationNode();
+			scene.add(this._pathCreationNode);
+		}
+		return this._pathCreationNode;
+	}
+
+	controlsPanningOff() {
+		controls.enablePan = false;
+		controls.update();
+	}
+
+	controlsPanningOn() {
+		controls.enablePan = true;
+		controls.update();
 	}
 
 	controlsOffAndRotate() {

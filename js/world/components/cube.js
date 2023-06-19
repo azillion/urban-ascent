@@ -1,8 +1,8 @@
-import { BoxBufferGeometry, MathUtils, Mesh, MeshStandardMaterial } from 'three';
+import { BoxGeometry, MathUtils, Mesh, MeshStandardMaterial } from 'three';
 
 function createCube() {
 	// create a geometry
-	const geometry = new BoxBufferGeometry(5, 3, 5);
+	const geometry = new BoxGeometry(5, 3, 5);
 
 	// create a default (white) Basic material
 	const material = new MeshStandardMaterial({
