@@ -1,6 +1,9 @@
 [package]
-name = "urban-ascent-bevy"
+name = "urban-ascent"
+description = "A city builder game. Built with Rust and WebAssembly."
 version = "0.1.0"
+repository = "https://github.com/azillion/urban-ascent"
+authors = ["Alexander Zillion <alex@alex.zillion.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -15,3 +18,6 @@ opt-level = 3
 
 [dependencies]
 bevy = { version = "0.10.1", features = ["dynamic_linking"] }
+bevy_editor_pls = "0.4.0"
+bevy_mod_picking = "0.13.0"
+smooth-bevy-cameras = "0.8.0"
