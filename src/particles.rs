@@ -84,7 +84,6 @@ fn setup_billboard_particles(
     let effect = effects.add(
         EffectAsset {
             name: "Gradient".to_string(),
-            // TODO: Figure out why no particle spawns if this is 1
             capacity: 32768,
             spawner: Spawner::rate(64.0.into()),
             ..Default::default()
@@ -112,19 +111,6 @@ fn setup_billboard_particles(
             gradient: Gradient::constant([0.2; 2].into()),
         }),
     );
-
-    // The ground
-    // commands
-    //     .spawn(PbrBundle {
-    //         mesh: meshes.add(Mesh::from(shape::Plane {
-    //             size: 4.0,
-    //             ..default()
-    //         })),
-    //         material: materials.add(Color::BLUE.into()),
-    //         transform: Transform::from_xyz(0.0, -0.5, 0.0),
-    //         ..Default::default()
-    //     })
-    //     .insert(Name::new("ground"));
 
     commands
         .spawn(ParticleEffectBundle::new(effect))

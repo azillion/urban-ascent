@@ -15,6 +15,8 @@ use bevy_hanabi::prelude::*;
 
 use crate::fly_camera::{FlyCamera, FlyCameraPlugin};
 
+const DAMPENING_FACTOR: f32 = 0.9;
+
 #[derive(Component)]
 pub struct MainCamera;
 
@@ -125,25 +127,25 @@ fn zoom_camera_with_mouse_wheel(
 ) {
     let Ok(mut transform) = camera_query.get_single_mut() else { println!("no camera"); return; };
 
-    let damping_factor = 0.5;
-
     for event in mouse_wheel_events.iter() {
         let is_zooming_in = event.y > 0.0;
         // Get the forward vector from the camera's rotation
         let forward = transform.rotation * Vec3::new(0.0, 0.0, -1.0);
+
+        let forward = forward * 2.0;
 
         if is_zooming_in {
             if transform.translation.y < 10.0 {
                 transform.translation.y = transform.translation.y.max(10.0);
                 continue;
             }
-            transform.translation += forward * damping_factor; // Move forward
+            transform.translation += forward * DAMPENING_FACTOR; // Move forward
         } else {
             if transform.translation.y > 1000.0 {
                 transform.translation.y = transform.translation.y.min(1000.0);
                 continue;
             }
-            transform.translation -= forward * damping_factor; // Move backward
+            transform.translation -= forward * DAMPENING_FACTOR; // Move backward
         }
     }
 }

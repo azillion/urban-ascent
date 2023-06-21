@@ -190,6 +190,7 @@ fn camera_movement_system(
 fn mouse_motion_system(
     time: Res<Time>,
     mut mouse_motion_event_reader: EventReader<MouseMotion>,
+    mouse_button_inputs: Res<Input<MouseButton>>,
     mut query: Query<(&mut FlyCamera, &mut Transform)>,
 ) {
     let mut delta: Vec2 = Vec2::ZERO;
@@ -197,6 +198,11 @@ fn mouse_motion_system(
         delta += event.delta;
     }
     if delta.is_nan() {
+        return;
+    }
+
+    if !mouse_button_inputs.pressed(MouseButton::Right) {
+        // check if right button is pressed
         return;
     }
 
