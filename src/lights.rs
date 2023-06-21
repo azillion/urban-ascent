@@ -1,8 +1,4 @@
-use bevy::{
-    core_pipeline::fxaa::Fxaa,
-    pbr::{CascadeShadowConfigBuilder, NotShadowCaster},
-    prelude::*,
-};
+use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
 
 #[derive(Component)]
 pub struct Sun;

@@ -10,7 +10,6 @@ impl Plugin for ParticlePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(HanabiPlugin)
             .add_startup_system(setup_gradient_particles);
-        // .add_startup_system(setup_particles);
     }
 }
 
@@ -74,8 +73,6 @@ fn setup_billboard_particles(
     mut effects: ResMut<Assets<EffectAsset>>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let texture_handle: Handle<Image> = asset_server.load("cloud.png");
 
