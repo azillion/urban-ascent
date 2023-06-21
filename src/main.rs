@@ -1,5 +1,7 @@
 mod cameras;
+mod fly_camera;
 mod lights;
+mod particles;
 mod render;
 mod terrain;
 
@@ -15,9 +17,10 @@ impl Plugin for UrbanAscentPlugin {
             .add_plugins(DefaultPlugins)
             // .add_plugin(EditorPlugin::default())
             // .add_plugins(DefaultPickingPlugins)
-            .add_plugin(cameras::CameraPlugin)
+            // .add_plugin(particles::ParticlePlugin)
             .add_plugin(lights::LightsPlugin)
             .add_plugin(terrain::TerrainPlugin)
+            .add_plugin(cameras::CameraPlugin)
             .add_system(bevy::window::close_on_esc);
     }
 }

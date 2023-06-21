@@ -19,5 +19,5 @@ opt-level = 3
 [dependencies]
 bevy = { version = "0.10.1", features = ["dynamic_linking"] }
 bevy_editor_pls = "0.4.0"
+bevy_hanabi = "0.6.2"
 bevy_mod_picking = "0.13.0"
-smooth-bevy-cameras = "0.8.0"

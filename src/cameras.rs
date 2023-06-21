@@ -4,12 +4,17 @@ use bevy::{
         fxaa::Fxaa,
         tonemapping::Tonemapping,
     },
+    input::mouse::MouseWheel,
     prelude::*,
+    transform,
 };
-use smooth_bevy_cameras::{
-    controllers::orbit::{OrbitCameraBundle, OrbitCameraController, OrbitCameraPlugin},
-    LookTransformPlugin,
-};
+use bevy_hanabi::prelude::*;
+// use smooth_bevy_cameras::{
+//     controllers::orbit::{OrbitCameraBundle, OrbitCameraController, OrbitCameraPlugin},
+//     LookTransformPlugin,
+// };
+
+use crate::fly_camera::{FlyCamera, FlyCameraPlugin};
 
 #[derive(Component)]
 pub struct MainCamera;
@@ -18,56 +23,56 @@ pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(LookTransformPlugin)
-            .add_plugin(OrbitCameraPlugin::default())
+        app.add_plugin(FlyCameraPlugin)
             .add_startup_system(setup_main_camera)
-            .add_system(toggle_fog_system);
+            .add_system(toggle_fog_system)
+            .add_system(move_particles_with_camera)
+            .add_system(pan_camera_with_keys)
+            .add_system(zoom_camera_with_mouse_wheel);
         // .add_system(update_bloom_settings);
     }
 }
 
 fn setup_main_camera(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands
-        .spawn((
-            Camera3dBundle {
-                camera: Camera {
-                    hdr: true,
-                    ..Default::default()
-                },
-                tonemapping: Tonemapping::TonyMcMapface,
-                transform: Transform::from_xyz(-5.0, 10., 5.0)
-                    .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
-                ..default()
-            },
-            FogSettings {
-                color: Color::rgba(0.1, 0.2, 0.4, 1.0),
-                directional_light_color: Color::rgba(1.0, 0.95, 0.75, 0.5),
-                directional_light_exponent: 30.0,
-                falloff: FogFalloff::from_visibility_colors(
-                    30.0, // distance in world units up to which objects retain visibility (>= 5% contrast)
-                    Color::rgb(0.35, 0.5, 0.66), // atmospheric extinction color (after light is lost due to absorption by atmospheric particles)
-                    Color::rgb(0.8, 0.844, 1.0), // atmospheric inscattering color (light gained due to scattering from the sun)
-                ),
-            },
-            // RaycastPickCamera::default(),
-            Fxaa::default(),
-            BloomSettings {
-                intensity: 0.3,
-                composite_mode: BloomCompositeMode::Additive,
-                prefilter_settings: BloomPrefilterSettings {
-                    threshold: 2.0,
-                    threshold_softness: 0.5,
-                },
+    commands.spawn((
+        Camera3dBundle {
+            camera: Camera {
+                hdr: true,
                 ..Default::default()
             },
-            MainCamera,
-        ))
-        .insert(OrbitCameraBundle::new(
-            OrbitCameraController::default(),
-            Vec3::new(-2.0, 5.0, 5.0),
-            Vec3::new(0., 0., 0.),
-            Vec3::Y,
-        ));
+            // projection: Projection::Perspective(PerspectiveProjection {
+            //     fov: 120.0,
+            //     ..Default::default()
+            // }),
+            tonemapping: Tonemapping::TonyMcMapface,
+            transform: Transform::from_xyz(0.0, 5.0, 15.0)
+                .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+            ..default()
+        },
+        FogSettings {
+            color: Color::rgba(0.1, 0.2, 0.4, 1.0),
+            directional_light_color: Color::rgba(1.0, 0.95, 0.75, 0.5),
+            directional_light_exponent: 30.0,
+            falloff: FogFalloff::from_visibility_colors(
+                200.0, // distance in world units up to which objects retain visibility (>= 5% contrast)
+                Color::rgb(0.35, 0.5, 0.66), // atmospheric extinction color (after light is lost due to absorption by atmospheric particles)
+                Color::rgb(0.8, 0.844, 1.0), // atmospheric inscattering color (light gained due to scattering from the sun)
+            ),
+        },
+        // RaycastPickCamera::default(),
+        Fxaa::default(),
+        BloomSettings {
+            intensity: 0.3,
+            composite_mode: BloomCompositeMode::Additive,
+            prefilter_settings: BloomPrefilterSettings {
+                threshold: 2.0,
+                threshold_softness: 0.5,
+            },
+            ..Default::default()
+        },
+        FlyCamera::default(),
+        MainCamera,
+    ));
 
     commands.spawn(
         TextBundle::from_section(
@@ -90,6 +95,80 @@ fn setup_main_camera(mut commands: Commands, asset_server: Res<AssetServer>) {
     );
 }
 
+fn pan_camera_with_keys(
+    time: Res<Time>,
+    keyboard_input: Res<Input<KeyCode>>,
+    mut camera_query: Query<&mut Transform, With<MainCamera>>,
+) {
+    let mut transform = camera_query.single_mut();
+    let velocity = 10.0;
+
+    if keyboard_input.pressed(KeyCode::W) || keyboard_input.pressed(KeyCode::Up) {
+        transform.translation.z -= velocity * time.delta_seconds();
+    }
+
+    if keyboard_input.pressed(KeyCode::S) || keyboard_input.pressed(KeyCode::Down) {
+        transform.translation.z += velocity * time.delta_seconds();
+    }
+
+    if keyboard_input.pressed(KeyCode::A) || keyboard_input.pressed(KeyCode::Left) {
+        transform.translation.x -= velocity * time.delta_seconds();
+    }
+
+    if keyboard_input.pressed(KeyCode::D) || keyboard_input.pressed(KeyCode::Right) {
+        transform.translation.x += velocity * time.delta_seconds();
+    }
+}
+
+fn zoom_camera_with_mouse_wheel(
+    mut camera_query: Query<&mut Transform, With<MainCamera>>,
+    mut mouse_wheel_events: EventReader<MouseWheel>,
+) {
+    let Ok(mut transform) = camera_query.get_single_mut() else { println!("no camera"); return; };
+
+    let damping_factor = 0.5;
+
+    for event in mouse_wheel_events.iter() {
+        let is_zooming_in = event.y > 0.0;
+        // Get the forward vector from the camera's rotation
+        let forward = transform.rotation * Vec3::new(0.0, 0.0, -1.0);
+
+        if is_zooming_in {
+            if transform.translation.y < 10.0 {
+                transform.translation.y = transform.translation.y.max(10.0);
+                continue;
+            }
+            transform.translation += forward * damping_factor; // Move forward
+        } else {
+            if transform.translation.y > 1000.0 {
+                transform.translation.y = transform.translation.y.min(1000.0);
+                continue;
+            }
+            transform.translation -= forward * damping_factor; // Move backward
+        }
+    }
+}
+
+fn move_particles_with_camera(
+    mut particle_query: Query<(&mut EffectSpawner, &mut Transform), Without<Projection>>,
+    camera_query: Query<&Transform, (With<Projection>, With<MainCamera>)>,
+) {
+    // Note: On first frame where the effect spawns, EffectSpawner is spawned during
+    // CoreSet::PostUpdate, so will not be available yet. Ignore for a frame if
+    // so.
+    let Ok(mut effect) = particle_query.get_single_mut() else { return; };
+
+    let Ok(transform) = camera_query.get_single() else { return; };
+
+    if effect.1.translation == transform.translation {
+        return;
+    }
+
+    effect.1.translation = transform.translation;
+    effect.0.reset();
+}
+
+#[allow(dead_code)]
 fn toggle_fog_system(keycode: Res<Input<KeyCode>>, mut fog: Query<&mut FogSettings>) {
     let mut fog_settings = fog.single_mut();
 
@@ -104,6 +183,7 @@ fn toggle_fog_system(keycode: Res<Input<KeyCode>>, mut fog: Query<&mut FogSettin
     }
 }
 
+#[allow(dead_code)]
 fn update_bloom_settings(
     mut camera: Query<(Entity, Option<&mut BloomSettings>), With<Camera>>,
     mut text: Query<&mut Text>,
