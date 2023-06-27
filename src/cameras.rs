@@ -4,18 +4,11 @@ use bevy::{
         fxaa::Fxaa,
         tonemapping::Tonemapping,
     },
-    input::mouse::MouseWheel,
     prelude::*,
 };
 use bevy_hanabi::prelude::*;
-// use smooth_bevy_cameras::{
-//     controllers::orbit::{OrbitCameraBundle, OrbitCameraController, OrbitCameraPlugin},
-//     LookTransformPlugin,
-// };
 
-use crate::fly_camera::{FlyCamera, FlyCameraPlugin};
-
-const DAMPENING_FACTOR: f32 = 0.9;
+use crate::controls::*;
 
 #[derive(Component)]
 pub struct MainCamera;
@@ -24,30 +17,26 @@ pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(FlyCameraPlugin)
-            .add_startup_system(setup_main_camera)
+        app.add_startup_system(setup_main_camera)
             .add_system(toggle_fog_system)
-            .add_system(move_particles_with_camera)
-            .add_system(pan_camera_with_keys)
-            .add_system(zoom_camera_with_mouse_wheel);
+            .add_system(pan_orbit_camera);
+        // .add_system(move_particles_with_camera)
         // .add_system(update_bloom_settings);
     }
 }
 
-fn setup_main_camera(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup_main_camera(mut commands: Commands) {
+    let translation = Vec3::new(0.0, 5.0, 15.0);
+    let radius = translation.length();
+
     commands.spawn((
         Camera3dBundle {
             camera: Camera {
                 hdr: true,
                 ..Default::default()
             },
-            // projection: Projection::Perspective(PerspectiveProjection {
-            //     fov: 120.0,
-            //     ..Default::default()
-            // }),
             tonemapping: Tonemapping::TonyMcMapface,
-            transform: Transform::from_xyz(0.0, 5.0, 15.0)
-                .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+            transform: Transform::from_translation(translation).looking_at(Vec3::ZERO, Vec3::Y),
             ..default()
         },
         FogSettings {
@@ -60,7 +49,6 @@ fn setup_main_camera(mut commands: Commands, asset_server: Res<AssetServer>) {
                 Color::rgb(0.8, 0.844, 1.0), // atmospheric inscattering color (light gained due to scattering from the sun)
             ),
         },
-        // RaycastPickCamera::default(),
         Fxaa::default(),
         BloomSettings {
             intensity: 0.3,
@@ -71,85 +59,35 @@ fn setup_main_camera(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
             ..Default::default()
         },
-        FlyCamera::default(),
+        PanOrbitCameraControls {
+            radius,
+            ..Default::default()
+        },
         MainCamera,
     ));
 
-    commands.spawn(
-        TextBundle::from_section(
-            "",
-            TextStyle {
-                font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-                font_size: 18.0,
-                color: Color::BLACK,
-            },
-        )
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            position: UiRect {
-                bottom: Val::Px(10.0),
-                left: Val::Px(10.0),
-                ..default()
-            },
-            ..default()
-        }),
-    );
+    // commands.spawn(
+    //     TextBundle::from_section(
+    //         "",
+    //         TextStyle {
+    //             font: asset_server.load("fonts/FiraMono-Medium.ttf"),
+    //             font_size: 18.0,
+    //             color: Color::BLACK,
+    //         },
+    //     )
+    //     .with_style(Style {
+    //         position_type: PositionType::Absolute,
+    //         position: UiRect {
+    //             bottom: Val::Px(10.0),
+    //             left: Val::Px(10.0),
+    //             ..default()
+    //         },
+    //         ..default()
+    //     }),
+    // );
 }
 
-fn pan_camera_with_keys(
-    time: Res<Time>,
-    keyboard_input: Res<Input<KeyCode>>,
-    mut camera_query: Query<&mut Transform, With<MainCamera>>,
-) {
-    let mut transform = camera_query.single_mut();
-    let velocity = 10.0;
-
-    if keyboard_input.pressed(KeyCode::W) || keyboard_input.pressed(KeyCode::Up) {
-        transform.translation.z -= velocity * time.delta_seconds();
-    }
-
-    if keyboard_input.pressed(KeyCode::S) || keyboard_input.pressed(KeyCode::Down) {
-        transform.translation.z += velocity * time.delta_seconds();
-    }
-
-    if keyboard_input.pressed(KeyCode::A) || keyboard_input.pressed(KeyCode::Left) {
-        transform.translation.x -= velocity * time.delta_seconds();
-    }
-
-    if keyboard_input.pressed(KeyCode::D) || keyboard_input.pressed(KeyCode::Right) {
-        transform.translation.x += velocity * time.delta_seconds();
-    }
-}
-
-fn zoom_camera_with_mouse_wheel(
-    mut camera_query: Query<&mut Transform, With<MainCamera>>,
-    mut mouse_wheel_events: EventReader<MouseWheel>,
-) {
-    let Ok(mut transform) = camera_query.get_single_mut() else { println!("no camera"); return; };
-
-    for event in mouse_wheel_events.iter() {
-        let is_zooming_in = event.y > 0.0;
-        // Get the forward vector from the camera's rotation
-        let forward = transform.rotation * Vec3::new(0.0, 0.0, -1.0);
-
-        let forward = forward * 2.0;
-
-        if is_zooming_in {
-            if transform.translation.y < 10.0 {
-                transform.translation.y = transform.translation.y.max(10.0);
-                continue;
-            }
-            transform.translation += forward * DAMPENING_FACTOR; // Move forward
-        } else {
-            if transform.translation.y > 1000.0 {
-                transform.translation.y = transform.translation.y.min(1000.0);
-                continue;
-            }
-            transform.translation -= forward * DAMPENING_FACTOR; // Move backward
-        }
-    }
-}
-
+#[allow(dead_code)]
 fn move_particles_with_camera(
     mut particle_query: Query<(&mut EffectSpawner, &mut Transform), Without<Projection>>,
     camera_query: Query<&Transform, (With<Projection>, With<MainCamera>)>,
