@@ -1,9 +1,10 @@
 [package]
 name = "urban-ascent"
-description = "A city builder game. Built with Rust and WebAssembly."
+description = "A city builder game. Built with Bevy."
 version = "0.1.0"
 repository = "https://github.com/azillion/urban-ascent"
 authors = ["Alexander Zillion <alex@alex.zillion.com>"]
+tags = ["game", "city-builder", "bevy"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
