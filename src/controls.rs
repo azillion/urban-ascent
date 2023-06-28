@@ -12,6 +12,14 @@ const MAX_RADIUS: f32 = 500.0;
 const MIN_HEIGHT: f32 = 5.0;
 const MAX_HEIGHT: f32 = 500.0;
 
+pub struct ControlsPlugin;
+
+impl Plugin for ControlsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(pan_orbit_camera);
+    }
+}
+
 /// Tags an entity as capable of panning and orbiting.
 #[derive(Component)]
 pub struct PanOrbitCameraControls {

@@ -1,5 +1,5 @@
 [package]
-name = "urban-ascent"
+name = "urban_ascent"
 description = "A city builder game. Built with Bevy."
 version = "0.1.0"
 repository = "https://github.com/azillion/urban-ascent"
@@ -21,7 +21,9 @@ opt-level = 3
 opt-level = 3
 
 [dependencies]
-bevy = { version = "0.10.1", features = ["dynamic_linking"] }
+# remove dynamic_linking feature when releasing
+# bevy = { version = "0.10.1", features = ["dynamic_linking"] }
+bevy = { version = "0.10.1" }
 bevy_editor_pls = "0.4.0"
 bevy_hanabi = "0.6.2"
 bevy_mod_picking = "0.13.0"

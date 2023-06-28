@@ -8,7 +8,7 @@ use bevy::{
 };
 use bevy_hanabi::prelude::*;
 
-use crate::controls::*;
+use crate::controls::PanOrbitCameraControls;
 
 #[derive(Component)]
 pub struct MainCamera;
@@ -18,8 +18,7 @@ pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup_main_camera)
-            .add_system(toggle_fog_system)
-            .add_system(pan_orbit_camera);
+            .add_system(toggle_fog_system);
         // .add_system(move_particles_with_camera)
         // .add_system(update_bloom_settings);
     }

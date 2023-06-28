@@ -1,10 +1,13 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 mod cameras;
 mod controls;
 mod lights;
 mod particles;
-// mod physics;
+mod physics;
 mod render;
+mod simulation;
 mod terrain;
+mod ui;
 
 use bevy::{
     prelude::*,
@@ -29,10 +32,13 @@ impl Plugin for UrbanAscentPlugin {
             // .add_plugin(EditorPlugin::default())
             // .add_plugins(DefaultPickingPlugins)
             // .add_plugin(particles::ParticlePlugin)
+            // .add_plugin(physics::PhysicsPlugin)
             .add_plugin(lights::LightsPlugin)
             .add_plugin(terrain::TerrainPlugin)
             .add_plugin(cameras::CameraPlugin)
-            // .add_plugin(physics::PhysicsPlugin)
+            .add_plugin(controls::ControlsPlugin)
+            .add_plugin(simulation::SimulationPlugin)
+            .add_plugin(ui::UIPlugin)
             .add_system(bevy::window::close_on_esc);
     }
 }
