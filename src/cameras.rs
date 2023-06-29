@@ -64,26 +64,6 @@ fn setup_main_camera(mut commands: Commands) {
         },
         MainCamera,
     ));
-
-    // commands.spawn(
-    //     TextBundle::from_section(
-    //         "",
-    //         TextStyle {
-    //             font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-    //             font_size: 18.0,
-    //             color: Color::BLACK,
-    //         },
-    //     )
-    //     .with_style(Style {
-    //         position_type: PositionType::Absolute,
-    //         position: UiRect {
-    //             bottom: Val::Px(10.0),
-    //             left: Val::Px(10.0),
-    //             ..default()
-    //         },
-    //         ..default()
-    //     }),
-    // );
 }
 
 #[allow(dead_code)]

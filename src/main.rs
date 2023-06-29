@@ -16,6 +16,14 @@ use bevy::{
 // use bevy_editor_pls::prelude::*;
 // use bevy_mod_picking::prelude::*;
 
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum AppState {
+    #[default]
+    MainMenu,
+    InGame,
+    PauseMenu,
+}
+
 struct UrbanAscentPlugin;
 
 impl Plugin for UrbanAscentPlugin {

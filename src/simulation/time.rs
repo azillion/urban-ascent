@@ -102,8 +102,13 @@ impl Default for TimeConfig {
     }
 }
 
-pub fn setup_time(mut commands: Commands) {
-    commands.insert_resource(TimeConfig::default());
+pub struct TimePlugin;
+
+impl Plugin for TimePlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(TimeConfig::default())
+            .add_event::<TimeEvent>();
+    }
 }
 
 pub fn update_time(

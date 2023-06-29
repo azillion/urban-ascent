@@ -25,7 +25,8 @@ impl Plugin for SimulationPlugin {
     fn build(&self, app: &mut App) {
         let game_running_system_set = (update_time).run_if(run_if_not_paused);
 
-        app.insert_resource(GameSpeed::Normal)
+        app.add_plugin(TimePlugin)
+            .insert_resource(GameSpeed::Normal)
             .add_system(game_running_system_set);
     }
 }
