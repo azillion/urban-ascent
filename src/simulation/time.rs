@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::AppState;
+
 const DAY_LENGTH: f32 = 60. * 24.; // 24 minutes
 const WEEK_LENGTH: f32 = DAY_LENGTH / 47.; // 30 seconds
 
@@ -24,6 +26,7 @@ pub enum Season {
     Winter,
 }
 
+#[derive(Debug)]
 pub enum Month {
     January,
     February,
@@ -39,6 +42,12 @@ pub enum Month {
     December,
 }
 
+// impl Display for Month {
+//     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+
+//     }
+// }
+
 #[derive(Resource)]
 pub struct TimeConfig {
     day_timer: Timer,    // 24 minutes
@@ -52,6 +61,10 @@ pub struct TimeConfig {
 impl TimeConfig {
     pub fn time(&self) -> f32 {
         self.seconds_in_day % DAY_LENGTH
+    }
+
+    pub fn hour(&self) -> u8 {
+        (self.time() / 60.) as u8
     }
 
     pub fn week(&self) -> u8 {
@@ -81,7 +94,7 @@ impl TimeConfig {
     }
 
     pub fn time_state(&self) -> TimeState {
-        if self.time() < DAY_LENGTH / 2. {
+        if self.time() < DAY_LENGTH / 1.5 {
             TimeState::Day
         } else {
             TimeState::Night
@@ -107,7 +120,8 @@ pub struct TimePlugin;
 impl Plugin for TimePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(TimeConfig::default())
-            .add_event::<TimeEvent>();
+            .add_event::<TimeEvent>()
+            .add_system(update_time.in_set(OnUpdate(AppState::InGame)));
     }
 }
 

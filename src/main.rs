@@ -18,8 +18,8 @@ use bevy::{
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
-    #[default]
     MainMenu,
+    #[default]
     InGame,
     PauseMenu,
 }
@@ -28,7 +28,8 @@ struct UrbanAscentPlugin;
 
 impl Plugin for UrbanAscentPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(ClearColor(Color::DARK_GRAY))
+        app.add_state::<AppState>()
+            .insert_resource(ClearColor(Color::DARK_GRAY))
             .add_plugins(DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
                     title: "Urban Ascent".to_string(),

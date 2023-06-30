@@ -4,6 +4,8 @@ use bevy::prelude::*;
 
 use time::*;
 
+pub use time::TimeConfig;
+
 #[derive(Debug, PartialEq, Eq, Resource)]
 pub enum GameSpeed {
     Paused,
