@@ -2,8 +2,11 @@ use bevy::prelude::*;
 
 use crate::AppState;
 
+use super::GameSpeed;
+
 const DAY_LENGTH: f32 = 60. * 24.; // 24 minutes
 const WEEK_LENGTH: f32 = DAY_LENGTH / 47.; // 30 seconds
+const DAYLIGHT_LENGTH: f32 = DAY_LENGTH / 1.5; // 16 minutes
 
 pub enum TimeEvent {
     TimeStateChange(TimeState),
@@ -67,6 +70,14 @@ impl TimeConfig {
         (self.time() / 60.) as u8
     }
 
+    pub fn daylight_remaining(&self) -> f32 {
+        DAYLIGHT_LENGTH - self.time()
+    }
+
+    pub fn night_remaining(&self) -> f32 {
+        DAY_LENGTH - self.time()
+    }
+
     pub fn week(&self) -> u8 {
         self.week
     }
@@ -94,7 +105,7 @@ impl TimeConfig {
     }
 
     pub fn time_state(&self) -> TimeState {
-        if self.time() < DAY_LENGTH / 1.5 {
+        if self.time() < DAYLIGHT_LENGTH {
             TimeState::Day
         } else {
             TimeState::Night
@@ -121,17 +132,21 @@ impl Plugin for TimePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(TimeConfig::default())
             .add_event::<TimeEvent>()
-            .add_system(update_time.in_set(OnUpdate(AppState::InGame)));
+            .add_system(
+                (update_time.in_set(OnUpdate(AppState::InGame))).run_if(super::run_if_not_paused),
+            );
     }
 }
 
 pub fn update_time(
     time: Res<Time>,
+    game_speed: Res<GameSpeed>,
     mut time_config: ResMut<TimeConfig>,
     mut events: EventWriter<TimeEvent>,
 ) {
-    time_config.day_timer.tick(time.delta());
-    time_config.week_timer.tick(time.delta());
+    let game_speed_time = time.delta().saturating_mul(*game_speed as u32);
+    time_config.day_timer.tick(game_speed_time);
+    time_config.week_timer.tick(game_speed_time);
 
     let mut is_new_day = false;
 

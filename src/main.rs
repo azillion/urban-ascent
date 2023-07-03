@@ -5,6 +5,7 @@ mod lights;
 mod particles;
 mod physics;
 mod render;
+mod save;
 mod simulation;
 mod terrain;
 mod ui;
@@ -18,8 +19,8 @@ use bevy::{
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
-    MainMenu,
     #[default]
+    MainMenu,
     InGame,
     PauseMenu,
 }
@@ -48,6 +49,7 @@ impl Plugin for UrbanAscentPlugin {
             .add_plugin(controls::ControlsPlugin)
             .add_plugin(simulation::SimulationPlugin)
             .add_plugin(ui::UIPlugin)
+            .add_plugin(save::SavePlugin)
             .add_system(bevy::window::close_on_esc);
     }
 }
