@@ -96,18 +96,18 @@ pub fn pan_orbit_camera(
     let default_cursor_pos = Vec2::new(window_size.x * 0.5, window_size.y * 0.5);
     let cursor_pos = window.cursor_position().unwrap_or(default_cursor_pos);
     // print!("cursor_pos: {:?}, window: {:?}\n", cursor_pos, window);
-    if cursor_pos.x < window_size.x * 0.05 {
-        mouse_move.x -= cursor_velocity;
-    }
-    if cursor_pos.x > window_size.x * 0.95 {
-        mouse_move.x += cursor_velocity;
-    }
-    if cursor_pos.y < window_size.y * 0.05 {
-        mouse_move.y += cursor_velocity;
-    }
-    if cursor_pos.y > window_size.y * 0.95 {
-        mouse_move.y -= cursor_velocity;
-    }
+    // if cursor_pos.x < window_size.x * 0.05 {
+    //     mouse_move.x -= cursor_velocity;
+    // }
+    // if cursor_pos.x > window_size.x * 0.95 {
+    //     mouse_move.x += cursor_velocity;
+    // }
+    // if cursor_pos.y < window_size.y * 0.05 {
+    //     mouse_move.y += cursor_velocity;
+    // }
+    // if cursor_pos.y > window_size.y * 0.95 {
+    //     mouse_move.y -= cursor_velocity;
+    // }
 
     for (mut pan_orbit, mut transform, projection) in query.iter_mut() {
         let mut any_movement = rotation_move.length_squared() > 0.0;

@@ -17,8 +17,8 @@ pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup_main_camera)
-            .add_system(toggle_fog_system);
+        app.add_startup_system(setup_main_camera);
+        // .add_system(toggle_fog_system);
         // .add_system(move_particles_with_camera)
         // .add_system(update_bloom_settings);
     }
@@ -41,9 +41,9 @@ fn setup_main_camera(mut commands: Commands) {
         FogSettings {
             color: Color::rgba(0.1, 0.2, 0.4, 1.0),
             directional_light_color: Color::rgba(1.0, 0.95, 0.75, 0.5),
-            directional_light_exponent: 30.0,
+            directional_light_exponent: 15.0,
             falloff: FogFalloff::from_visibility_colors(
-                200.0, // distance in world units up to which objects retain visibility (>= 5% contrast)
+                1000.0, // distance in world units up to which objects retain visibility (>= 5% contrast)
                 Color::rgb(0.35, 0.5, 0.66), // atmospheric extinction color (after light is lost due to absorption by atmospheric particles)
                 Color::rgb(0.8, 0.844, 1.0), // atmospheric inscattering color (light gained due to scattering from the sun)
             ),

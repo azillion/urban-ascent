@@ -1,13 +1,17 @@
+mod utils;
+
+pub use utils::*;
+
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::{
-    io::prelude::*,
+    io::{self, prelude::*},
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use crate::simulation::GameSpeed;
+use crate::simulation::{GameSpeed, TimeConfig};
 
 pub const DEFAULT_SAVE_FOLDER: &str = "saves";
 
@@ -17,10 +21,10 @@ pub struct GameState {
     mayor_name: String,
     money: u32,
     population: u32,
-    seconds_in_day: f32, // 0.0 - 1440.0
-    week: u8,            // 0 - 47
-    month: u8,           // 0 - 11
-    year: u32,
+    pub seconds_in_day: f32, // 0.0 - 1440.0
+    pub week: u8,            // 0 - 47
+    pub month: u8,           // 0 - 11
+    pub year: u32,
     game_speed: GameSpeed,
 }
 
@@ -37,13 +41,25 @@ impl GameState {
         self
     }
 
-    pub fn load(&self, file: PathBuf) -> Self {
-        let mut file = std::fs::File::open(file).expect("Failed to open file");
+    pub fn load(file: PathBuf) -> Result<GameState, io::Error> {
+        let mut file = std::fs::File::open(file).expect("Could not open file");
         let mut contents = String::new();
         file.read_to_string(&mut contents)
-            .expect("Failed to read file");
-        let mut state: GameState = serde_json::from_str(&contents).expect("Failed to parse file");
-        state
+            .expect("Could not read file");
+        let state: GameState = serde_json::from_str(&contents).expect("Could not deserialize file");
+        Ok(state)
+    }
+
+    pub fn update(&mut self, state: GameState) {
+        self.city_name = state.city_name.clone();
+        self.mayor_name = state.mayor_name.clone();
+        self.money = state.money;
+        self.population = state.population;
+        self.seconds_in_day = state.seconds_in_day;
+        self.week = state.week;
+        self.month = state.month;
+        self.year = state.year;
+        self.game_speed = state.game_speed;
     }
 
     pub fn set_city_name(&mut self, city_name: &str) {
@@ -134,6 +150,14 @@ pub struct SavePlugin;
 
 impl Plugin for SavePlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(GameState::default());
+        app.insert_resource(GameState::default())
+            .add_system(sync_game_state);
     }
+}
+
+fn sync_game_state(mut state: ResMut<GameState>, time_config: Res<TimeConfig>) {
+    state.set_seconds_in_day(time_config.seconds_in_day());
+    state.set_week(time_config.week());
+    state.set_month(time_config.month_idx());
+    state.set_year(time_config.year());
 }

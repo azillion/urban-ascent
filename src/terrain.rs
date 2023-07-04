@@ -1,6 +1,6 @@
 use bevy::{pbr::NotShadowCaster, prelude::*};
 use bevy_rapier3d::prelude::*;
-// use noise::{NoiseFn, Perlin};
+use noise::{NoiseFn, Perlin};
 
 pub const TERRAIN_SIZE: f32 = 100000000.0;
 pub const TERRAIN_LENGTH: f32 = 10000.0;
@@ -45,51 +45,51 @@ fn setup_terrain(
         .insert(Terrain);
 
     // cube
-    // let rainbow_colors: [Color; 7] = [
-    //     Color::rgb(1.0, 0.0, 0.0),
-    //     Color::rgb(1.0, 0.5, 0.0),
-    //     Color::rgb(1.0, 1.0, 0.0),
-    //     Color::rgb(0.0, 1.0, 0.0),
-    //     Color::rgb(0.0, 0.0, 1.0),
-    //     Color::rgb(0.29, 0.0, 0.51),
-    //     Color::rgb(0.58, 0.0, 0.83),
-    // ];
+    let rainbow_colors: [Color; 7] = [
+        Color::rgb(1.0, 0.0, 0.0),
+        Color::rgb(1.0, 0.5, 0.0),
+        Color::rgb(1.0, 1.0, 0.0),
+        Color::rgb(0.0, 1.0, 0.0),
+        Color::rgb(0.0, 0.0, 1.0),
+        Color::rgb(0.29, 0.0, 0.51),
+        Color::rgb(0.58, 0.0, 0.83),
+    ];
 
-    // let perlin = Perlin::new(42);
+    let perlin = Perlin::new(42);
 
-    // let building_size = 4.0;
+    let building_size = 4.0;
 
-    // for x in (0..100).map(|i| i as f32 * building_size) {
-    //     for z in (0..100).map(|i| i as f32 * building_size) {
-    //         let val = perlin
-    //             .get([x as f64 * 0.1, z as f64 * 0.1, rand::random()])
-    //             .abs();
-    //         let max_y = (val * 50.0 + 5.0) as f32;
+    for x in (0..100).map(|i| i as f32 * building_size) {
+        for z in (0..100).map(|i| i as f32 * building_size) {
+            let val = perlin
+                .get([x as f64 * 0.1, z as f64 * 0.1, rand::random()])
+                .abs();
+            let max_y = (val * 50.0 + 5.0) as f32;
 
-    //         let color: Color = rainbow_colors[(val * 6.0).floor() as usize];
+            let color: Color = rainbow_colors[(val * 6.0).floor() as usize];
 
-    //         // create buildings
-    //         commands.spawn((PbrBundle {
-    //             mesh: meshes.add(Mesh::from(shape::Box {
-    //                 min_x: -building_size / 2.0,
-    //                 max_x: building_size / 2.0,
-    //                 min_z: -building_size / 2.0,
-    //                 max_z: building_size / 2.0,
-    //                 min_y: 0.1,
-    //                 max_y: max_y,
-    //                 ..Default::default()
-    //             })),
-    //             material: materials.add(StandardMaterial {
-    //                 base_color: color.into(),
-    //                 perceptual_roughness: 0.7,
-    //                 metallic: 0.9,
-    //                 ..default()
-    //             }),
-    //             transform: Transform::from_xyz(x - 50., 0.1, z - 50.),
-    //             ..default()
-    //         },));
-    //     }
-    // }
+            // create buildings
+            commands.spawn((PbrBundle {
+                mesh: meshes.add(Mesh::from(shape::Box {
+                    min_x: -building_size / 2.0,
+                    max_x: building_size / 2.0,
+                    min_z: -building_size / 2.0,
+                    max_z: building_size / 2.0,
+                    min_y: 0.1,
+                    max_y: max_y,
+                    ..Default::default()
+                })),
+                material: materials.add(StandardMaterial {
+                    base_color: color.into(),
+                    perceptual_roughness: 0.7,
+                    metallic: 0.9,
+                    ..default()
+                }),
+                transform: Transform::from_xyz(x - 50., 0.1, z - 50.),
+                ..default()
+            },));
+        }
+    }
 
     // Sky
     let sky_mesh = Mesh::from(shape::Box::new(TERRAIN_LENGTH, SKY_HEIGHT, TERRAIN_WIDTH));

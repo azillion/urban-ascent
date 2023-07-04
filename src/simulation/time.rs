@@ -1,12 +1,14 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 
-use crate::AppState;
+use crate::{save::GameState, AppState};
 
 use super::GameSpeed;
 
-const DAY_LENGTH: f32 = 60. * 24.; // 24 minutes
+pub const DAY_LENGTH: f32 = 60. * 24.; // 24 minutes
 const WEEK_LENGTH: f32 = DAY_LENGTH / 47.; // 30 seconds
-const DAYLIGHT_LENGTH: f32 = DAY_LENGTH / 1.5; // 16 minutes
+pub const DAYLIGHT_LENGTH: f32 = DAY_LENGTH / 1.5; // 16 minutes
 
 pub enum TimeEvent {
     TimeStateChange(TimeState),
@@ -62,6 +64,21 @@ pub struct TimeConfig {
 }
 
 impl TimeConfig {
+    pub fn update_from_game_state(&mut self, state: &GameState) {
+        self.seconds_in_day = state.seconds_in_day;
+        self.week = state.week;
+        self.month = state.month;
+        self.year = state.year;
+        let day_dur = Duration::from_secs_f32(self.seconds_in_day);
+        self.day_timer.set_elapsed(day_dur);
+        let week_dur = Duration::from_secs_f32((state.week as f32) * WEEK_LENGTH);
+        self.week_timer.set_elapsed(week_dur);
+    }
+
+    pub fn seconds_in_day(&self) -> f32 {
+        self.seconds_in_day
+    }
+
     pub fn time(&self) -> f32 {
         self.seconds_in_day % DAY_LENGTH
     }
@@ -70,8 +87,12 @@ impl TimeConfig {
         (self.time() / 60.) as u8
     }
 
-    pub fn daylight_remaining(&self) -> f32 {
-        DAYLIGHT_LENGTH - self.time()
+    pub fn minute(&self) -> u8 {
+        (self.time() % 60.) as u8
+    }
+
+    pub fn daylight_amount(&self) -> f32 {
+        self.time() / DAYLIGHT_LENGTH
     }
 
     pub fn night_remaining(&self) -> f32 {
@@ -98,6 +119,10 @@ impl TimeConfig {
             11 => Month::December,
             _ => Month::January,
         }
+    }
+
+    pub fn month_idx(&self) -> u8 {
+        self.month
     }
 
     pub fn year(&self) -> u32 {

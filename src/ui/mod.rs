@@ -3,6 +3,8 @@ mod game;
 mod main_menu;
 mod state;
 
+pub use config::*;
+
 use bevy::prelude::*;
 
 pub struct UIPlugin;
