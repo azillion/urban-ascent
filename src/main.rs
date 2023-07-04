@@ -3,11 +3,13 @@ mod cameras;
 mod controls;
 mod lights;
 mod particles;
+mod paths;
 mod physics;
 mod render;
 mod save;
 mod simulation;
 mod terrain;
+mod tools;
 mod ui;
 
 use bevy::{
