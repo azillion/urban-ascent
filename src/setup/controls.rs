@@ -4,7 +4,7 @@ use bevy::{
     window::PrimaryWindow,
 };
 
-use crate::cameras::MainCamera;
+use super::cameras::MainCamera;
 
 // Min and Max radius for camera
 const MIN_RADIUS: f32 = 5.0;

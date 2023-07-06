@@ -9,7 +9,7 @@ use bevy::{
 use bevy_atmosphere::prelude::*;
 use bevy_hanabi::prelude::*;
 
-use crate::controls::PanOrbitCameraControls;
+use super::controls::PanOrbitCameraControls;
 
 #[derive(Component)]
 pub struct MainCamera;

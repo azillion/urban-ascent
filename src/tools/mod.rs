@@ -1,3 +1,7 @@
+mod paths;
+
+pub use paths::*;
+
 use bevy::prelude::*;
 
 use crate::AppState;
@@ -15,12 +19,12 @@ pub enum Tools {
 }
 
 #[derive(Resource)]
-pub struct ToolsState {
+pub struct ToolsConfig {
     pub current: Tools,
     pub previous: Tools,
 }
 
-impl Default for ToolsState {
+impl Default for ToolsConfig {
     fn default() -> Self {
         Self {
             current: Tools::Pan,
@@ -29,7 +33,7 @@ impl Default for ToolsState {
     }
 }
 
-impl ToolsState {
+impl ToolsConfig {
     pub fn set(&mut self, tool: Tools) {
         self.previous = self.current;
         self.current = tool;
@@ -73,7 +77,7 @@ pub struct ToolsPlugin;
 impl Plugin for ToolsPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(ToolsKeyCodeConfig::default())
-            .insert_resource(ToolsState::default())
+            .insert_resource(ToolsConfig::default())
             .add_system(setup.in_schedule(OnEnter(AppState::InGame)))
             .add_system(cleanup.in_schedule(OnExit(AppState::InGame)));
     }

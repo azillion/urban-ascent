@@ -1,12 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-mod cameras;
-mod controls;
-mod lights;
-mod particles;
-mod paths;
-mod physics;
 mod render;
 mod save;
+mod setup;
 mod simulation;
 mod terrain;
 mod tools;
@@ -18,6 +13,8 @@ use bevy::{
 };
 // use bevy_editor_pls::prelude::*;
 // use bevy_mod_picking::prelude::*;
+
+const WINDOW_TITLE: &str = "Urban Ascent";
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
@@ -35,7 +32,7 @@ impl Plugin for UrbanAscentPlugin {
             .insert_resource(ClearColor(Color::DARK_GRAY))
             .add_plugins(DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
-                    title: "Urban Ascent".to_string(),
+                    title: WINDOW_TITLE.to_string(),
                     mode: WindowMode::BorderlessFullscreen,
                     ..default()
                 }),
@@ -45,10 +42,8 @@ impl Plugin for UrbanAscentPlugin {
             // .add_plugins(DefaultPickingPlugins)
             // .add_plugin(particles::ParticlePlugin)
             // .add_plugin(physics::PhysicsPlugin)
-            .add_plugin(lights::LightsPlugin)
+            .add_plugin(setup::SetupPlugin)
             .add_plugin(terrain::TerrainPlugin)
-            .add_plugin(cameras::CameraPlugin)
-            .add_plugin(controls::ControlsPlugin)
             .add_plugin(simulation::SimulationPlugin)
             .add_plugin(ui::UIPlugin)
             .add_plugin(save::SavePlugin)
