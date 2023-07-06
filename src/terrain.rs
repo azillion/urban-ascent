@@ -59,6 +59,13 @@ fn setup_terrain(
 
     let building_size = 4.0;
 
+    let mut mat = StandardMaterial {
+        base_color: Color::rgb(0.0, 0.0, 0.0).into(),
+        perceptual_roughness: 0.7,
+        metallic: 0.9,
+        ..default()
+    };
+
     for x in (0..100).map(|i| i as f32 * building_size) {
         for z in (0..100).map(|i| i as f32 * building_size) {
             let val = perlin
@@ -67,6 +74,8 @@ fn setup_terrain(
             let max_y = (val * 50.0 + 5.0) as f32;
 
             let color: Color = rainbow_colors[(val * 6.0).floor() as usize];
+
+            mat.base_color = color.into();
 
             // create buildings
             commands.spawn((PbrBundle {
@@ -79,12 +88,7 @@ fn setup_terrain(
                     max_y: max_y,
                     ..Default::default()
                 })),
-                material: materials.add(StandardMaterial {
-                    base_color: color.into(),
-                    perceptual_roughness: 0.7,
-                    metallic: 0.9,
-                    ..default()
-                }),
+                material: materials.add(mat.clone()),
                 transform: Transform::from_xyz(x - 50., 0.1, z - 50.),
                 ..default()
             },));
