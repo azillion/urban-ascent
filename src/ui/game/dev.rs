@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    lights::Sun,
+    setup::Sun,
     simulation::TimeConfig,
     ui::config::{DEFAULT_FONT, DEFAULT_FONT_SIZE, WHITE},
     AppState,

@@ -3,7 +3,6 @@ mod render;
 mod save;
 mod setup;
 mod simulation;
-mod terrain;
 mod tools;
 mod ui;
 
@@ -40,10 +39,7 @@ impl Plugin for UrbanAscentPlugin {
             }))
             // .add_plugin(EditorPlugin::default())
             // .add_plugins(DefaultPickingPlugins)
-            // .add_plugin(particles::ParticlePlugin)
-            // .add_plugin(physics::PhysicsPlugin)
             .add_plugin(setup::SetupPlugin)
-            .add_plugin(terrain::TerrainPlugin)
             .add_plugin(simulation::SimulationPlugin)
             .add_plugin(ui::UIPlugin)
             .add_plugin(save::SavePlugin)

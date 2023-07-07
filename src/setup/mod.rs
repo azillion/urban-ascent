@@ -4,6 +4,8 @@ mod lights;
 mod particles;
 mod physics;
 
+pub use lights::Sun;
+
 use bevy::prelude::*;
 
 pub struct SetupPlugin;

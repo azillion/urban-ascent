@@ -1,7 +1,5 @@
 mod utils;
 
-pub use utils::*;
-
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -12,6 +10,7 @@ use std::{
 };
 
 use crate::simulation::{GameSpeed, TimeConfig};
+pub use utils::*;
 
 pub const DEFAULT_SAVE_FOLDER: &str = "saves";
 
