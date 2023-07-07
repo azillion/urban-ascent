@@ -167,7 +167,7 @@ fn update_date_clock(
     for mut text in query.iter_mut() {
         text.sections[1].value = format!(
             "{:?}/{:?}/{:?}\n",
-            time_config.week(),
+            time_config.week() % 4,
             time_config.month(),
             time_config.year()
         );
