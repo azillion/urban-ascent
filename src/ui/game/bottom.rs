@@ -1,24 +1,24 @@
 use bevy::prelude::*;
 
-use crate::save::{get_most_recently_changed_file, GameState, Save, DEFAULT_SAVE_FOLDER};
+use crate::save::GameState;
 use crate::ui::config::*;
 use crate::AppState;
 
 #[derive(Component)]
-struct TopRight;
+struct Bottom;
 
 #[derive(Component)]
-struct SaveButton;
+struct StraightRoadButton;
 
 #[derive(Component)]
-struct SaveButtonText;
+struct StraightRoadButtonText;
 
-pub struct TopRightPlugin;
+pub struct BottomPlugin;
 
-impl Plugin for TopRightPlugin {
+impl Plugin for BottomPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(setup.in_schedule(OnEnter(AppState::InGame)))
-            .add_system(save_button_system.in_set(OnUpdate(AppState::InGame)))
+            .add_system(straight_road_button_system.in_set(OnUpdate(AppState::InGame)))
             .add_system(cleanup.in_schedule(OnExit(AppState::InGame)));
     }
 }
@@ -32,8 +32,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     size: Size::new(Val::Px(300.0), Val::Undefined),
                     position_type: PositionType::Absolute,
                     position: UiRect {
-                        top: Val::Px(0.0),
-                        right: Val::Px(0.0),
+                        bottom: Val::Px(200.0),
+                        left: Val::Px(0.0),
                         ..Default::default()
                     },
                     justify_content: JustifyContent::FlexEnd,
@@ -42,14 +42,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 },
                 ..Default::default()
             },
-            TopRight,
+            Bottom,
         ))
         .with_children(|parent| {
             parent
                 .spawn((
                     ButtonBundle {
                         style: Style {
-                            size: Size::new(Val::Px(100.0), Val::Px(50.0)),
+                            size: Size::new(Val::Px(50.0), Val::Px(50.0)),
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
                             margin: UiRect::all(Val::Px(5.0)),
@@ -58,13 +58,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         background_color: NORMAL_BUTTON.into(),
                         ..Default::default()
                     },
-                    SaveButton,
+                    StraightRoadButton,
                 ))
                 .with_children(|parent| {
                     parent.spawn((
                         TextBundle {
                             text: Text::from_section(
-                                "Save",
+                                "S",
                                 TextStyle {
                                     font: font.clone(),
                                     font_size: DEFAULT_FONT_SIZE,
@@ -73,15 +73,15 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                             ),
                             ..Default::default()
                         },
-                        SaveButtonText,
+                        StraightRoadButtonText,
                     ));
                 });
         });
 }
 
-fn save_button_system(
+fn straight_road_button_system(
     commands: Commands,
-    mut interaction_query: Query<(&Interaction, &mut BackgroundColor), With<SaveButton>>,
+    mut interaction_query: Query<(&Interaction, &mut BackgroundColor), With<StraightRoadButton>>,
     game_state: Res<GameState>,
 ) {
     for (interaction, mut color) in interaction_query.iter_mut() {
@@ -107,7 +107,7 @@ fn save_button_system(
     }
 }
 
-fn cleanup(mut commands: Commands, query: Query<Entity, With<TopRight>>) {
+fn cleanup(mut commands: Commands, query: Query<Entity, With<Bottom>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }

@@ -1,5 +1,6 @@
 mod consumers;
 mod logistics;
+mod path;
 mod person;
 mod producers;
 mod resources;
